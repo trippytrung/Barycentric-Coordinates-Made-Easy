@@ -1,0 +1,558 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[inline]{asymptote}
+\usepackage{amsmath,amssymb,amsthm}
+
+\title{Barycentric Coordinates Made Easy}
+\author{Trung Nguyen}
+\date{September 7, 2020}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\begin{center}
+    "\textit{You always admire what you really don't understand}."
+    
+    -Blaise Pascal
+\end{center}
+
+\vspace{.1in}
+\subsection{An Overview of Barycentric Coordinates}Barycentric coordinates are basically a really cool and direct way to solve geometry problems. After employing them, you will look smart and  feel good (there is always a huge sense of accomplishment when finishing a bary bash). One of the biggest downsides to Barycentric coordinates is that they take a long time to understand since it relies on some linear algebra. However, don't let that stop you from learning this powerful bashing technique: it is completely possible to learn Barycentric coordinates without a knowledge of vectors and even without a knowledge of mass points (the author is living proof). \textit{What one fool can do, another can}.
+\subsection{How to Use This Handout}The best way to learn something new in math is by solving problems. So this is how this handout is designed: there is not a lot of teaching here, but there is a lot of problems. Read all of the theory sections, and then to solve all the problems. It will make you more comfortable with this technique faster. 
+\subsection{I am sorry...}
+This is my first handout. I apologize if there are any typos, mistakes, confusing parts. I am pretty sure this handout is loaded with weird, inconsistent capitalization and grammar mistakes and indenting.  I also apologize if my formatting was annoying. This is my first time with Overleaf so I did not get everything I wanted. Specifically, I need to learn how to use make my diagrams look not so bad. 
+
+\section{Theory}
+\subsection{Reference Triangles and Coordinates}
+\textbf{Example 1.} Explain the concept of a "Reference Triangle" and find the Barycentric coordinates of its vertices.
+\vspace{.1in}
+
+\textbf{Solution:} Before doing anything with Barycentric Coordinates, one must select a reference triangle. This is much like selecting a plane in Cartesian Coordinates. This is why Barycentric Coordinates are very useful in triangle problems. Many geometry problems contain a $\triangle ABC$ and in many cases we will let our reference triangle be $\triangle ABC$. 
+
+Just as important as the reference triangle are the coordinates. Every Barycentric Coordinate is of the form $(x,y,z)$ where I like to call $x$ the $A-$component, $y$ the $B-$component, and $z$ the $C-$component. This is because, once we have selected our reference triangle, it is customary to let $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. As you can see, for each point $A,B,C$ their respective coordinates have a $1$ while the others have $0$s. This should make logical sense since the point $A$ has not $B$ or $C$ coordinates. 
+
+
+If this is still confusing, don't worry! All that you really need to understand is 1) when using Barycentric Coordinates, one must specify what the reference triangle is, and 2) the coordinates of a reference triangle $ABC$ are $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. Also remember that $\triangle ABC$ need not be the reference triangle, but in many cases, it is a good idea to let it be. 
+\vspace{.2in}
+\hrule
+\vspace{.2in}
+\textbf{Exercise 1.} Suppose the medial triangle of $\triangle ABC$ with coordinates $X,Y,Z$ is constructed. Select a reference triangle other than $\triangle ABC$ and find its reference coordinates.
+
+\subsection{Finding Coordinates}
+When points lie on the sides of the reference triangle and ratios are known, it is really easy to find the coordinates of these points. Let's see this in action.
+\vspace{.2in}
+
+ The following example was inspired by AoPS User Arrowhead575's post on a similar problem that appeared on a Mock MATHCOUNTS test.
+ 
+ \textbf{Example 2.}  In the diagram shown, $AF$ bisects $\angle CAB$, $AE=3$ and $EB=AD=CD=CF=5$. Find the Barycentric Coordinates of all named points.  
+
+\begin{asy}
+/* Geogebra to Asymptote conversion, documentation at artofproblemsolving.com/Wiki go to User:Azjps/geogebra */
+import graph; size(6cm);
+real labelscalefactor = 0.5; /* changes label-to-point distance */
+pen dps = linewidth(0.7) + fontsize(10); defaultpen(dps); /* default pen style */
+pen dotstyle = black; /* point style */
+real xmin = -12.64, xmax = 18.08, ymin = -3.16, ymax = 10.84; /* image dimensions */
+
+/* draw figures */
+draw((0,0)--(8,0), linewidth(2));
+draw((0,0)--(5.1875,8.549259836383499), linewidth(2));
+draw((5.1875,8.549259836383499)--(8,0), linewidth(2));
+draw((0,0)--(6.748848174479689,3.803172284849312), linewidth(2));
+draw((2.59375,4.274629918191749)--(3,0), linewidth(2));
+/* dots and labels */
+dot((0,0),dotstyle);
+label("$A$", (0.08,0.2), W * labelscalefactor);
+dot((8,0),dotstyle);
+label("$B$", (8.08,0.2), NE * labelscalefactor);
+dot((5.1875,8.549259836383499),linewidth(4pt) + dotstyle);
+label("$C$", (5.26,8.7), NE * labelscalefactor);
+dot((2.59375,4.274629918191749),linewidth(4pt) + dotstyle);
+label("$D$", (2.68,4.44), SE * labelscalefactor);
+dot((3,0),dotstyle);
+label("$E$", (3.08,0.2), NE * labelscalefactor);
+dot((6.748848174479689,3.803172284849312),dotstyle);
+label("$F$", (6.82,4), NE * labelscalefactor);
+dot((7.374424087239845,1.901586142424656),linewidth(4pt) + dotstyle);
+clip((xmin,ymin)--(xmin,ymax)--(xmax,ymax)--(xmax,ymin)--cycle);
+/* end of picture */
+\end{asy}
+\vspace{.1in}
+
+\textbf{Solution:} Before we continue, it will be helpful to note that we will be working with homogenized or normalized Barycentric coordinates. What this means is that in a point $P=(x,y,z)$ we will always have $x+y+z=1$. 
+
+Now, let our reference triangle be $ABC$. Then $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. By the angle bisector theorem, $BF=4$. We will work in alphabetical order. 
+
+We are given that $D$ is the midpoint of $AC$ so $\frac{AD}{DC}=\frac 11$. We can "pretend" that $AC$ is subdivided into $1+1=2$ pieces each of measure $\frac 12$ so that they add to $1$. Now, imagine point $A$ moving to point $C$: when this happens, we get from $(1,0,0)$ to $(0,0,1)$. The $A-$coordinate of point $A$ goes down from $1$ to $0$ and the $C-$coordinate of point $A$ goes up from $0$ to $1$ as point $A$ slides along $AC$. Notice that the $B-$coordinate stays constant at $0$ since there is absolutely not $B-$ component in the segment $AC$. To get from $A$ to $D$, the $A-$coordinate of point $A$ goes down from $1$ to $\frac 12$ while the $C-$coordinate of point $A$ goes up from $0$ to $\frac 12$. This should be very logical: $D$ is the midpoint of $AC$, so while $A$ is sliding up to $C$, if it stops at $D$, it only makes sense if it stops halfway. Again, there is no $B$ coordinate since $D$ lies on $AC$. Hence, we find that $D=(\frac 12,0,\frac 12).$ Indeed, $\frac 12 + 0 + \frac 12 =1$. 
+
+Proceeding with a similar manner, we can find the coordinates of $E$. We have $\frac{AE}{EB}=\frac 35$, so we can pretend that $AB$ is subdivided into $3+5=8$ pieces each of measure $\frac 18$ so that they add to $1$. As $A=(1,0,0)$ moves along $AB$ to $B=(0,1,0)$, the $A$ coordinate goes from $1$ to $0$ while the $B$ coordinate grows from $0$ to $1$. The $C$ coordinate is fixed at $0$ since there is no $C$ component in $AB$. To get from $A$ to $E$, the $A-$coordinate of point $A$ goes down from $1$ to $\frac 58$ while the $C-$coordinate of point $A$ goes up from $0$ to $\frac 38$ (check that this makes logical sense). Hence we find that $E=(\frac 58,\frac 38,0)$ and indeed $\frac 58 + \frac 38 + 0 =1$. 
+
+The coordinates of $F$ will be left as an exercise for the reader.
+\vspace{.2in}
+\hrule
+\vspace{.2in}
+\textbf{Exercise 2.} Find the coordinates of $F$ in Example 2 above.
+
+\textbf{Exercise 3.} Given any two points with Barycentric Coordinates, find their midpoint. 
+
+\subsection{The Barycentric Area Formula}
+In the barycentric coordinate system, for any three points $P,Q,R$ with coordinates $(x_1,y_1,z_1),(x_2,y_2,z_2),(x_3,y_3,z_3)$, respectively, the area of triangle $PQR$ is a ratio: it is $|\frac{[PQR]}{[ABC]}|=
+\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}$ where $[ABC]$ is the area of the reference triangle. Notice that there are absolute values over the areas. This is because the areas are signed and might come out negative...it honestly doesn't really matter as long as you remember to take the absolute value. Now, before you complete freak out because of the determinant, just know that the determinant is just short hand for $x_1(y_2z_3-z_2y_3)+y_1(z_2x_3-x_2z_3)+z_1(x_2y_3-y_2x_3)$. Hence, the area formula is just an exercise in not screwing up easy calculations (for this entire handout, I do not bother expanding the determinant since it takes too long to type. Instead, I just plug them into my TI-84 CE to guarantee no errors. I do encourage the reader to expand them though because calculators are not always allowed).
+
+Let's see how we can use this to solve problems.
+\vspace{.2in}
+
+\textbf{Example 3.} Show that the area of the medial triangle of $\triangle ABC$ is $\frac 14 \cdot [ABC]$. 
+\textbf{Solution:} We apply Barycentric Coordinates with respect to $\triangle ABC$. $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. Let the vertices of the medial triangle be $P,Q,R$. By the Barycentric midpoint formula found in Exercise 3, we have that $P=(\frac 12,\frac 12,0),Q=(\frac 12,0,\frac 12),R=(0,\frac 12,\frac 12)$. By the Barycentric area formula, we have $|\frac{[PQR]}{[ABC]}|=
+\begin{vmatrix}
+\frac 12 &\frac 12  &0 \\ 
+\frac 12 &0 &\frac 12 \\ 
+ 0& \frac 12 & \frac 12
+\end{vmatrix}=\frac 14$ as desired.
+\vspace{.2in}
+\hrule
+\vspace{.2in}
+\textbf{Exercise 4.} Find the ratio of the area of $\triangle DEF$ to the area of $\triangle ABC$ in Example 2.
+
+\subsection{Equations of Lines}
+What is a line? It is basically a triangle with area $0$. It is well known that two points define a line. Hence, the Barycentric equation of a line through two points, $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $\begin{vmatrix}
+x &y  &z \\ 
+x_{1} &y_{1}  &z_{1} \\ 
+ x_{2}& y_{2} & z_{2}
+\end{vmatrix}$ where the top row is any point $R=(x,y,z)$ on the line. Expanding the determinant, the equation of a line through two points is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$. This may look cluncky, but it works very nicely when the line goes through a vertex of the reference triangle.
+\vspace{.2in}
+
+The following Example was created and solved by AoPS user mathverse06
+\textbf{Example 4.} Suppose there is a triangle $ABC$. If $AP_1:BP_1=2:1$ and $P_3$ is the midpoint of $AC$,
+find $\frac{[P_{1}P_{2}P_{3}]}{[ABC]}$
+
+\textbf{Solution:} Suppose we pick $\bigtriangleup ABC$ as our reference triangle. Then $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$
+
+By the ratio of $2:1$, $P_{1}=(\frac{1}{3},\frac{2}{3},0)$. And $P_3$ is the midpoint, giving us $P_3=(\frac{1}{2},0,\frac{1}{2})$.
+
+We use equations of lines. $BP_3: x-z=0$ (this is the result of plugging the points $B$ and $P_3$ in the line formula) and $CP_1:2x-y=0$ (this is the result of plugging points $C$ and $P_1$). Therefore $P_2=(\frac{1}{4},\frac{1}{2},\frac{1}{4})$ (this is obtained by solving the system $$x-z=0$$ $$2x-y=0$$ $$x+y+z=1$$ as $P_2$ is the intersection of the two lines and the coordinates of $P_2$ must add to $1$).
+
+In the barycentric coordinate system, the area formula is $[P_{1}P_{2}P_{3}]=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}\cdot [ABC]$
+
+Since, $P_{1}=(\frac{1}{3},\frac{2}{3},0)$, $P_2=(\frac{1}{4},\frac{1}{2},\frac{1}{4})$, and $P_3=(\frac{1}{2},0,\frac{1}{2})$
+
+we can plug them in to have $\frac{[P_{1}P_{2}P_{3}]}{[ABC]}=\begin{vmatrix}
+\frac{1}{3} &\frac{2}{3} &0 \\ 
+\frac{1}{4} &\frac{1}{2} &\frac{1}{4} \\ 
+\frac{1}{2}& 0 & \frac{1}{2}
+\end{vmatrix}=\frac{1}{12}$ Hence we're done.\begin{asy}
+ /* Geogebra to Asymptote conversion, documentation at artofproblemsolving.com/Wiki go to User:Azjps/geogebra */
+import graph; size(6cm); 
+real labelscalefactor = 0.5; /* changes label-to-point distance */
+pen dps = linewidth(0.7) + fontsize(10); defaultpen(dps); /* default pen style */ 
+pen dotstyle = black; /* point style */ 
+real xmin = -15.36, xmax = 15.36, ymin = -7, ymax = 7;  /* image dimensions */
+
+ /* draw figures */
+draw((-0.88,5.28)--(-6.46,-1.78), linewidth(2)); 
+draw((-6.46,-1.78)--(5.52,-2.08), linewidth(2)); 
+draw((5.52,-2.08)--(-0.88,5.28), linewidth(2)); 
+draw((-4.6024071128673745,0.5702877747591999)--(5.52,-2.08), linewidth(2)); 
+draw((2.32,1.6)--(-6.46,-1.78), linewidth(2)); 
+draw((-4.6024071128673745,0.5702877747591999)--(2.32,1.6), linewidth(2)); 
+ /* dots and labels */
+dot((-0.88,5.28),dotstyle); 
+label("$A$", (-0.8,5.48), NE * labelscalefactor); 
+dot((-6.46,-1.78),dotstyle); 
+label("$B$", (-6.38,-1.58), SW * labelscalefactor); 
+dot((5.52,-2.08),dotstyle); 
+label("$C$", (5.6,-1.88), NE * labelscalefactor); 
+dot((-4.6024071128673745,0.5702877747591999),dotstyle); 
+label("$P_1$", (-4.52,0.78), SW * labelscalefactor); 
+dot((2.32,1.6),linewidth(4pt) + dotstyle); 
+label("$P_3$", (2.4,1.76), NE * labelscalefactor); 
+dot((-5.531203556433687,-0.6048561126204001),linewidth(4pt) + dotstyle); 
+dot((-3.67,1.75),linewidth(4pt) + dotstyle); 
+dot((-2.074262357048094,-0.09164086182489264),linewidth(4pt) + dotstyle); 
+label("$P_2$", (-2,0.06), NE * labelscalefactor); 
+clip((xmin,ymin)--(xmin,ymax)--(xmax,ymax)--(xmax,ymin)--cycle); 
+ /* end of picture */
+\end{asy}
+
+\vspace{.2in}
+\hrule
+\vspace{.2in}
+\textbf{Exercise 5.} In Example 2 above, let the intersection of the $AF$ and $DE$ be $G$. Find the coordinates of $G$.
+
+\subsection{Solutions to Exercises}
+\textbf{Solution to Exercise 1:} Answers will vary. There are $\binom 63 \cdot 3!-6$ different possible answers. One possible answer is selecting $\triangle XYZ$ as the reference triangle with $X=(1,0,0),Y=(0,1,0),Z=(0,0,1)$.
+
+\textbf{Solution to Exercise 2:} Following a similar process in the Solution Example 2, $F=(0,\frac 59,\frac 49)$.
+
+\textbf{Solution to Exercise 3:} For any two points $P$ and $Q$ with Barycentric coordinates $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$, their midpoint $M$ is $M=(\frac{x_1+x_2}2,\frac{y_1+y_2}2,\frac{z_1+z_2}2)$.
+
+\textbf{Solution to Exercise 4:} We know all the points. Just plug into the Barycentric area formula to find that the answer is $\frac{37}{144}$.
+
+\textbf{Solution to Exercise 5:} We just plug in values in the equation of a line. The equation of $AF$ is $-z_2y+y_2z=0 \Rightarrow -4y+5z=0$. The equation of $DE$ is $x(-\frac 12 \cdot \frac 38) +y(\frac 12 \cdot \frac 58)+z(\frac 12 \cdot \frac 38)=0 \Rightarrow -3x+5y+3z$. So point $G=(x+y+z)$ satisfies both of these equations AND $x+y+z=1$. Solving this system tells us that $G=(\frac{37}{64},\frac{15}{64},\frac{12}{64})$. 
+\section{Problems}
+The following are 11 nice geometry problems that were all barybashed by the author himself. They are all in random order (the other in which they were solved) so the difficulty may feel rather random. I encourage skipping. Do note that all of the solutions do not require any fancy Bary tools: they only require what was presented above. Enjoy!
+\vspace{.2in}
+
+
+
+\textbf{Problem 1:}  (2019 AMC 8 Problem 24)
+In triangle $ABC$, point $D$ divides side $\overline{AC}$ so that $AD:DC=1:2$. Let $E$ be the midpoint of $\overline{BD}$ and let $F$ be the point of intersection of line $BC$ and line $AE$. Given that the area of $\triangle ABC$ is $360$, what is the area of $\triangle EBF$?
+
+\begin{asy}
+ unitsize(2cm); pair A,B,C,DD,EE,FF; B = (0,0); C = (3,0);  A = (1.2,1.7); DD = (2/3)*A+(1/3)*C; EE = (B+DD)/2; FF = intersectionpoint(B--C,A--A+2*(EE-A)); draw(A--B--C--cycle); draw(A--FF);  draw(B--DD);dot(A);  label("$A$",A,N); dot(B);  label("$B$", B,SW);dot(C);  label("$C$",C,SE); dot(DD);  label("$D$",DD,NE); dot(EE);  label("$E$",EE,NW); dot(FF);  label("$F$",FF,S); 
+\end{asy}
+
+$\textbf{(A) }24\qquad\textbf{(B) }30\qquad\textbf{(C) }32\qquad\textbf{(D) }36\qquad\textbf{(E) }40$
+\vspace{.2in}
+
+
+\textbf{Problem 2:} (2013 AMC 10B Problem 16)
+In triangle $ABC$, medians $AD$ and $CE$ intersect at $P$, $PE=1.5$, $PD=2$, and $DE=2.5$. What is the area of $AEDC$?
+
+$\qquad\textbf{(A) }13\qquad\textbf{(B) }13.5\qquad\textbf{(C) }14\qquad\textbf{(D) }14.5\qquad\textbf{(E) }15$ 
+\begin{asy} 
+pair A,B,C,D,E,P; A=(0,0); B=(80,0); C=(20,40); D=(50,20); E=(40,0); P=(33.3,13.3); draw(A--B); draw(B--C); draw(A--C); draw(C--E); draw(A--D); draw(D--E); dot(A); dot(B); dot(C); dot(D); dot(E); dot(P); label("A",A,NNW); label("B",B,NNE); label("C",C,ENE); label("D",D,ESE); label("E",E,SSE); label("P",P,SSE); 
+\end{asy}
+\vspace{.2in}
+
+
+\textbf{Problem 3:} (2004 AMC 10B Problem 20)
+In $\triangle ABC$ points $D$ and $E$ lie on $BC$ and $AC$, respectively. If $AD$ and $BE$ intersect at $T$ so that $\frac{AT}{DT}=3$ and $\frac{BT}{ET}=4$, what is $\frac{CD}{BD}$?
+
+
+$\mathrm{(A) \ } \frac{1}{8} \qquad \mathrm{(B) \ } \frac{2}{9} \qquad \mathrm{(C) \ } \frac{3}{10} \qquad \mathrm{(D) \ } \frac{4}{11} \qquad \mathrm{(E) \ } \frac{5}{12}$
+
+
+\begin{asy}
+unitsize(1cm); defaultpen(0.8); pair A=(0,0), B=5*dir(60), C=5*(1,0), D=B + (11/15)*(C-B), E = A + (11/16)*(C-A); draw(A--B--C--cycle); draw(A--D); draw(B--E); pair T=intersectionpoint(A--D,B--E); label("$A$",A,SW); label("$B$",B,N); label("$C$",C,SE); label("$D$",D,NE); label("$E$",E,S); label("$T$",T,2*WNW);
+\end{asy} 
+\vspace{.2in}
+
+
+\textbf{Problem 4:} (by peter227pan, revised by me) 
+Right $\triangle ABC$ with $\angle A=90^\circ$ has $AB = 20$ and $AC = 15$. Point $D$ is on $AB$ with $BD = 2$. Points $E$ and $F$ are placed on rays $CA$ and $CB$, respectively, such that $CD$ is a median of $\triangle CEF$. Find the area of $\triangle CEF$.
+\vspace{.2in}
+
+
+\textbf{Problem 5:} (2020 SIME No. 1 by AoPS user jj_ca888)
+Let $\triangle ABC$ be an equilateral triangle with side length $1$ and $M$ be the midpoint of side $AC$. Let $N$ be the foot of the perpendicular from $M$ to side $AB$. The angle bisector of angle $\angle BAC$ intersects $MB$ and $MN$ at $X$ and $Y$, respectively. If the area of triangle $\triangle MXY$ is $\mathcal{A}$, and $\mathcal{A}^2$ can be expressed as a common fraction in the form $\tfrac{m}{n}$ where $m$ and $n$ are relatively prime positive integers, find $m + n$.
+\vspace{.2in}
+
+
+\textbf{Problem 6:} (2008 MATHCOUNTS National Team No. 10, worded by me) 
+In right $\triangle ABC$ with $\angle C=90^\circ$, $AC=4, CB=7$. $E$ is the midpoint of $AC$. $F$ is on $CB$ such that $CF=3$ and $FB=4$. $BE$ and $AF$ intersect at $D$. Find the area of $\triangle ABD$.
+\vspace{.2in}
+
+
+\textbf{Problem 7:} (by AoPS user CatDog76, revised by me)
+In the diagram, find $\frac{[ADE]}{[ABC]}$. 
+\begin{asy}
+unitsize(0.15 cm); pair A, B, C, D, E; A = (191/39,28*sqrt(1166)/39); B = (0,0); C = (39,0); D = (6*A + 19*B)/25; E = (28*A + 14*C)/42; draw(A--B--C--cycle); draw(D--E); label("$A$", A, N); label("$B$", B, SW); label("$C$", C, SE); label("$D$", D, W); label("$E$", E, NE); label("$19$", (A + D)/2, W); label("$6$", (B + D)/2, W); label("$14$", (A + E)/2, NE); label("$28$", (C + E)/2, NE);
+\end{asy} 
+\vspace{.2in}
+
+
+\textbf{Problem 8:} (by Quentissential, Latex by me)
+If $ABC$ is an equilateral triangle with $D$ and $E$ the midpoints of $AB$ and $BC$, respectively, and $F$ the intersection of $AE$ and $DC$, find the ratio of the area of $DEC$ to $ABC$.
+Bonus: Find the ratio of the area of $DEF$ to $ABC$.
+\vspace{.2in}
+
+
+\textbf{Problem 9:} (1995 Denmark MO - Mohr Contest p3)
+From the vertex $C$ in triangle $ABC$, draw a straight line that bisects the median from $A$. In what ratio does this line divide the segment $AB$?
+\begin{asy}
+ /* Geogebra to Asymptote conversion, documentation at artofproblemsolving.com/Wiki go to User:Azjps/geogebra */
+import graph; size(9cm); 
+real labelscalefactor = 0.5; /* changes label-to-point distance */
+pen dps = linewidth(0.7) + fontsize(10); defaultpen(dps); /* default pen style */ 
+pen dotstyle = black; /* point style */ 
+real xmin = -15.36, xmax = 15.36, ymin = -7, ymax = 7;  /* image dimensions */
+
+ /* draw figures */
+draw((-1.18,4.6)--(-6.46,-1.78), linewidth(2)); 
+draw((-6.46,-1.78)--(5.52,-2.08), linewidth(2)); 
+draw((5.52,-2.08)--(-1.18,4.6), linewidth(2)); 
+draw((-1.18,4.6)--(-0.47,-1.93), linewidth(2)); 
+draw((xmin, -0.5382190701339638*xmin + 0.8909692671394797)--(xmax, -0.5382190701339638*xmax + 0.8909692671394797), linewidth(2)); /* line */
+ /* dots and labels */
+dot((-1.18,4.6),dotstyle); 
+label("$A$", (-1.1,4.8), NE * labelscalefactor); 
+dot((-6.46,-1.78),dotstyle); 
+label("$B$", (-6.38,-1.58), NE * labelscalefactor); 
+dot((5.52,-2.08),dotstyle); 
+label("$C$", (5.6,-1.88), NE * labelscalefactor); 
+dot((-0.47,-1.93),linewidth(4pt) + dotstyle); 
+label("$D$", (-0.38,-1.78), NE * labelscalefactor); 
+dot((-0.825,1.335),linewidth(4pt) + dotstyle); 
+label("$E$", (-0.74,1.5), NE * labelscalefactor); 
+clip((xmin,ymin)--(xmin,ymax)--(xmax,ymax)--(xmax,ymin)--cycle); 
+ /* end of picture */
+\end{asy}
+\vspace{.2in}
+
+
+\textbf{Problem 10:} (by AoPS user peter227pan)
+The incircle of $\vartriangle ABC$ is tangent to sides $\overline{BC}, \overline{AC}$, and $\overline{AB}$ at $D, E$, and $F$, respectively. Point $G$ is the intersection of lines $AC$ and $DF$. The sides of $\vartriangle ABC$ have lengths $AB = 73, BC = 123$, and $AC = 120$. Find the length $EG$.
+
+\vspace{.2in}
+
+
+\textbf{Problem 11:} (Cupertino Math Circle Junior No. 29)
+Triangle $ABC$ has an area of $144$. Point $D$ is on $BC$ such that $BD : DC =1 : 3$ and point $F$ is on $AB$ such that $AF : FB= 1 : 4$. Point $E$ is on $AC$ such that $AD, BE,$ and $CF$ intersect at point $G$. What is area of triangle $GDC$?
+
+\section{Solutions}
+Note: In some of my solutions, I use Augmented Matrices. This is just fancy stuff for solving system of equations so ignore it. Also, AoPS links to all problems and solutions are available upon request. 
+
+Bigger Note: If any of my solutions are confusing and lack motivation, please let me know and I will try to clear up the confusion.
+
+Biggest Note: It is not a good idea to use Barycentric coordinates on contests with limited time such as the AMCs. I would NEVER dream of bashing easy problems under a time constraint and I encourages you to do the same. Mass Points in particular offer nice solutions to many of these problems.
+\vspace{.2in}
+
+
+\textbf{Solution 1:}
+We pick $\bigtriangleup ABC$ as our reference triangle. Then $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. It is quite obvious that $D=(\frac 23 ,0,\frac 13)$ (NOT $D=(\frac 13 ,0,\frac 23)$).
+
+The coordinates of $E$ are easy since it is a midpoint. So $E=(\frac 13,\frac 12,\frac 16)$.
+
+To find the coordinates of $F$, use the equation of a line. We want to find $BC$ and $AE$ and have them intersect to find $F$.  The equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$. 
+
+Put $B=(x,y,z) = (0,1,0)$ and $C=(x,y,z) = (0,0,1)$ into the equation to get $x = 0$. (This makes intuitive sense...there is no "$A$" component in $BC$.)
+
+Put $A=(1,0,0)$ and $E=(\frac 13,\frac 12,\frac 16)$ into the equation to get $y(-1*\frac 16)+z(1*\frac 12)=0 \Rightarrow \frac 16y=\frac 12z\Rightarrow y-3z=0$. 
+
+To find $F$, we just need to solve $$x=0$$ $$y-3z=0$$ $$x+y+z=1$$. Solving this system, we find that the coordinates of $F$ will be $\left(0, \frac{3}{4}, \frac{1}{4} \right)$.
+
+In the Barycentric coordinate system, the area formula is $[BEF]=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}\cdot [ABC]$
+
+Since, $B=(0,1,0)$, $E=(\frac 13,\frac 12,\frac 16)$, and $F=\left(0, \frac{3}{4}, \frac{1}{4} \right)$
+
+we can plug them in to have $\frac{[BEF]}{[ABC]}=\begin{vmatrix}
+0&1 &0 \\ 
+\frac{1}{3} &\frac{1}{2} &\frac{1}{6} \\ 
+0&\frac{3}{4}&  \frac{1}{3} 
+\end{vmatrix}\Rightarrow \frac{[BEF]}{360}=\frac{1}{12}$ so $[BEF]=30$. $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 2:}
+We pick $\bigtriangleup ABC$ as our reference triangle. Then $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. Since points $D$ and $E$ are midpoints, we have $D=(0,\frac 12,\frac 12)$ and $E=(\frac 12,\frac 12,0)$. Since $P$ is the centroid, it has coordinates $P=(\frac13,\frac13,\frac13)$ (make sure you see why). By the Barycentric Area formula, we have $\frac{[EDP]}{[ABC]}=\begin{vmatrix}
+\frac 12 &\frac 12 &0 \\
+0 &\frac 12 &\frac 12 \\
+\frac 13& \frac 13&\frac 13
+\end{vmatrix} = \frac {1}{12}$ (if you got $-\frac {1}{12}$ it doesn't matter since the areas are signed). By Heron's Formula and the given side lengths, $[\triangle EDP]=\frac 32$ (or just notice the Pythagorean Triples and it is $\frac 12$ of the area of a $3-4-5$ triangle). Therefore, $[ABC]=18$. Drawing the midpoint of side $AC$ and calling it $F$, it is quite obvious that $DEF$ is a medial triangle. Hence, $[AEDC]=\frac 34 * 18 = 13.5$. $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 3:}
+Let our reference triangle be $\triangle BTD$ and let $B = (1,0,0), T = (0,1,0)$, and $D = (0,0,1)$ (Cool! The reference triangle is not $\triangle ABC$). 
+
+From $D$ to $T$, the $x$ coordinate increases by $1$ and the $z$ coordinate decreases by $1$. Thus, from $T$ to $A$, the $x$ coordinate increases by $3$ and the $z$ coordinate decreases by $3$. Hence, $A=(0,4,-3)$. (Check that this makes sense.) 
+
+From $B$ to $T$, the $x$ coordinate decreases by $1$ and the $y$ coordinate increases by $1$. Thus, from $T$ to $E$, the $x$ coordinate decreases by $\frac 14$ and the $y$ coordinate increases by $\frac 14$. Hence, $E=(-\frac 14,\frac 54,0)$. 
+
+To find the coordinates of $C$, we need to find the intersection of lines $AE$ and $BD$. If a point lies on $BD$ then it satisfies $y=0$. If a point lies on $AE$ then it must satisfy $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$ for two points $A=(x_1,y_1,z_1)$ and $E=(x_2,y_2,z_2)$. Plugging in values, we obtain (since we know $y=0$) $x(-(-3)\frac 54)+z(-4*-\frac 14) \Rightarrow 15x+4z=0$. But $x+y+z=1 \Rightarrow x+z=1$ since $y=0$. Solving this system, we find that $x=-\frac{4}{11}$ and $z=\frac{15}{11}$ so $C=(-\frac{4}{11},0,\frac{15}{11})$. 
+
+We finish with an obvious synthetic observation. Draw segment $TC$. Since they share an altitude, the ratio $\frac{CD}{BD}$ (what we want) is equal to the ratio of $\frac{[DTC]}{[BTD]}$. Using the Barycentric Area formula, we that that $\frac{[DTC]}{[BTD]}=\begin{vmatrix}
+0 &0 &1 \\
+0 &1 &0 \\
+-\frac {4}{11}& 0&\frac {15}{11}
+\end{vmatrix}=\frac{4}{11}$. $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 4:} 
+We proceed with Barycentric Coordinates.
+
+Let $\triangle ABC$ be our reference triangle. Then $A=(1,0,0), B=(0,1,0),C=(0,0,1)$. It is not hard to deduce that $D=(\frac{1}{10},\frac{9}{10},0)$. Note that since $E$ is on ray $CA$, it must be of the form $(x_1,0,z_1)$. Similarly, because $F$ lies on ray $CB$, it must be of the form $(0,y_2,z_2)$. With basic Number Theory and a understanding of homogenized Barycentric Coordinates, we find that $E=(\frac 15,0,\frac 45)$ and $F=(0,\frac 95,-\frac 45)$. 
+
+In the barycentric coordinate system, the area formula is $[CEF]=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}\cdot [ABC]$. Plugging in values, we have $[CEF]=\begin{vmatrix}
+0 &0  &1 \\ 
+\frac 15 &0  &\frac 45 \\ 
+ 0& \frac 95& -\frac 45
+\end{vmatrix}\cdot \frac{20*15}2 =\frac{9}{25}*150=54$. $\blacksquare$ 
+\vspace{.2in}
+
+
+\textbf{Solution 5:}
+An ideal candidate for Barycentric Coordinates. 
+
+Let our reference triangle be $\triangle ABC$. $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. It is easy to deduce that $M=(\frac 12,0,\frac 12)$ and $X=(\frac 13, \frac 13, \frac 13)$. With $30-60-90$ triangles, we find that $AN=\frac 14$ so $N=(\frac 34, \frac 14,0)$. 
+
+Point $Y$ is the intersection of $NM$ and $AX$. Recall that the equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$.
+
+The equation of the line through $N$ and $M$ is $x(\frac 14 *\frac 12)+y(-\frac 34 *\frac 12)+z(-\frac 14 *\frac 12)=0 \Rightarrow \frac 18 x-\frac 38 y - \frac 18 z=0\Rightarrow x-3y-z=0$. 
+
+The equation of the line through $A$ and $X$ is $-\frac 13 y+\frac 13 z=0 \Rightarrow -y+z=0$. 
+
+But $x+y+z=1$. 
+
+We proceed with Augmented Matrices (this is just solving a system of equations): $$ \begin{bmatrix}
+1 & -3 & 1 &0\\
+0& -1 & 1 &0\\
+1&1&1&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+1 & -3 & 1 &0\\
+0& -1 & 1 &0\\
+1&0&2&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+1 & -3 & 1 &0\\
+0& -1 & 1 &0\\
+0&3&3&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+1 & -3 & 1 &0\\
+0& -1 & 1 &0\\
+0&0&6&1
+\end{bmatrix}.$$ Now it is easy to see that $Y=(\frac 23,\frac 16,\frac 16)$.
+
+In the barycentric coordinate system, the area formula is $|\frac{[MXY]}{[ABC]}|=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}$. Plugging in values, we find that $[MXY]=\frac {1}{12}*\frac {\sqrt 3}{4}=\frac{\sqrt3}{48}$. Squaring and adding the numerator and denominator gives the desired $769$. $\blacksquare$
+
+Remarks: Cute problem. A synthetic observation that $Y$ was the midpoint of $AX$ would have greatly reduced calculations...
+\vspace{.2in}
+
+
+\textbf{Solution 6:}
+Let our reference triangle be $\triangle ABC$. $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. It is easy to deduce that $E=(\frac 12,0,\frac 12)$ and $F=(0, \frac 37, \frac 47)$.
+
+Now it remains to find the coordinates of $D$. 
+
+The equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$.
+
+$D$ is the intersection of $BE$ and $AF$.
+
+The equation of $EB$ is $\frac 12 x-\frac 12 z=0\Rightarrow x-z=0$.
+
+The equation of $AF$ is $-\frac 47 y+\frac 37 z=0\Rightarrow -4y+3z=0$.
+
+But $x+y+z=1$. 
+
+We proceed with Augmented Matrices: $$ \begin{bmatrix}
+1 & 0 & -1 &0\\
+0& -4 & 3 &0\\
+1&1&1&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+1 & 0 & -1 &0\\
+0& -4 & 3 &0\\
+0&1&2&1
+\end{bmatrix}\Rightarrow\begin{bmatrix}
+1 & 0 & -1 &0\\
+0& -4 & 3 &0\\
+0&4&8&4
+\end{bmatrix}\Rightarrow\begin{bmatrix}
+1 & 0 & -1 &0\\
+0& -4 & 3 &0\\
+0&0&11&4
+\end{bmatrix}\Rightarrow$$ Now it is easy to see that $D=(\frac {4}{11}, \frac{3}{11},\frac {4}{11})$.
+
+In the Barycentric coordinate system, the area formula is $|\frac{[ABD]}{[ABC]}|=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}$. Plugging in values, we find that $[ABD]=\frac {4}{11}*14=\frac{56}{11}$. $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 7:}
+We apply Barycentric coordinates.
+
+Let $\triangle ABC$ be our reference triangle so that $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. It is not too hard to deduce that $D=(\frac{6}{25},\frac{19}{25},0)$ and $E=(\frac 23,0,\frac 13)$. By the Barycentric Area formula, we have $\frac{[ADE]}{[ABC]}=\begin{vmatrix}
+1 &0 &0 \\
+\frac{6}{25} &\frac {19}{25} &0 \\
+\frac 23& 0&\frac 13
+\end{vmatrix} = \frac {19}{75}$. $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 8:}
+Let our reference triangle be $\triangle ABC$ so that $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. It is obvious that $D=(\frac 12,\frac 12,0)$ and $E=(0,\frac 12,\frac 12)$. $F$ is the centroid so we have $F=(\frac 13,\frac 13,\frac 13)$.
+
+By the Barycentric Area formula, we have $\frac{[DEC]}{[ABC]}=\frac 14$.
+
+Similarly, by the Barycentric Area formula, we have $\frac{[DEF]}{[ABC]}=\frac {1}{12}$. QED $\square$ $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 9:}
+Let $\triangle ABC$ be our reference triangle so that $A=(1,0,0)$ , $B=(0,1,0)$, $C=(0,0,1)$. Since $D$ and $M$ are midpoints, it is easy to see that their coordinates are $(0,\frac 12,\frac 12)$ and $(\frac 12,\frac 14,\frac 14)$, respectively. Let $X$ be the intersection of lines $CM$ and $AB$. The equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$. Hence, the equation of the line through $C$ and $M$ is $x(-\frac 14)+y(\frac 12)=0$. But since $X$ lies on side $AB$, we have $z=0$. Hence, it suffices to solve$$-\frac 14x+\frac 12 y=0$$$$x+y+0=1$$from where we find that $(x,y)=(\frac 23,\frac 13)$. Hence, the coordinates of $X$ are $(\frac 23,\frac 13,0)$ and it follows that $\overline{AX}:\overline{XB}=1:2. \blacksquare$
+(NOTE: Here $M=E$.)
+\vspace{.2in}
+
+\textbf{Solution 10:}
+We apply Barycentric Coordinates.
+
+Let our reference triangle be $\triangle ABC$ so that $A=(1,0,0),B-(0,1,0),C=(0,0,1)$. Because we are given the incircle and the side lengths of $\triangle ABC$, it is easy to find the measure of $AF=AE=35,BF=BD=38,$ and $CD=CE=85$. Now, we easily have $D=(0,\frac{85}{123},\frac{38}{123}), E=(\frac{85}{120},0,\frac{35}{120}), F=(\frac{38}{73},\frac{35}{73},0)$. It remains to the the coordinates of $G$.
+
+The equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$. We let $D=P$ and $Q=F$. Hence, the equation of the line through $D$ and $F$ is $0=(-\frac{35}{73}*\frac{38}{123})x+(\frac{38}{123}*\frac{38}{73})y+(-\frac{38}{73}*\frac{85}{123})z \Rightarrow 0=35x-38y+85z$. We also have $x+y+z=1$. But notice that $G$ is on the line through $C$ and $A$ as well. Hence, $y=0$. Therefore, we solve the system$$35x+85z=0$$$$x+z=1$$from which we find that $x=\frac{17}{10}$ and $z=-\frac{7}{10}$. So $G=(\frac{17}{10},0,-\frac{7}{10}$.
+
+From the Barycentric area formula, we have $\frac{[BEG]}{[ABC]}=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}$ where $B=(x_{1}, y_{1}  ,z_{1}), E=(x_{2} ,y_{2}  ,z_{2}),G= (x_{3}, y_{3} ,z_{3}).$ Plugging in values, we find that $\frac{[BEG]}{[ABC]}=\frac{119}{120}$. But the ratio of their areas is equal to the ratio of their bases since they share an altitude. Hence, $EG=\frac{119}{120}*AC=119$. $\blacksquare$
+\vspace{.2in}
+
+
+\textbf{Solution 11:}
+
+We proceed with Barycentric Coordinates. Let $\triangle ABC$ be our reference triangle, so $A=(1,0,0),B=(0,1,0),C=(0,0,1)$. We have that $D=(0,\frac 34,\frac 14)$ and $F=(\frac 45, \frac 15, 0)$.
+
+
+The equation of a line through two points $P=(x_1,y_1,z_1)$ and $Q=(x_2,y_2,z_2)$ is $x(y_1z_2 -z_1y_2)+y(z_1x_2-x_1z_2)+z(x_1y_2-y_1x_2)=0$. Hence, the equation of $\overline {AD}$ is $y(-\frac 14)+z(\frac 34)=0$ and the equation of $\overline{CF}$ is $x( -\frac 15)+y(\frac 45)=0$. Point $G$ is the intersection of these two lines. But note that $x+y+z=1$. Hence, we need to solve the system$$-\frac 14 y+\frac 34 z=0$$$$-\frac 15 x+\frac 45 y=0$$$$x+y+z=1$$which we do with Augmented Matrices:$$ \begin{bmatrix}
+0 & -\frac 14 & \frac 34 &0\\
+-\frac 15& \frac 45 &0  &0\\
+1&1&1&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+0 & -1 & 3 &0\\
+-1& 4 & 0 &0\\
+1&1&1&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+0 & -1 & 3 &0\\
+-1& 4 & 0 &0\\
+0&5&1&1
+\end{bmatrix}\Rightarrow \begin{bmatrix}
+0 & -1 & 3 &0\\
+-1& 4 & 0 &0\\
+0&0&16&1
+\end{bmatrix}.$$Now it is easy to see that $(x,y,z)=(\frac 34,\frac {3}{16},\frac {1}{16})$.
+
+The Barycentric Area formula is $|\frac{[GCD]}{[ABC]}|=\begin{vmatrix}
+x_{1} &y_{1}  &z_{1} \\ 
+x_{2} &y_{2}  &z_{2} \\ 
+ x_{3}& y_{3} & z_{3}
+\end{vmatrix}$. Plugging in values, we find that $[GCD]=\frac{9}{16}(144)=81$. $\blacksquare$
+\section{For Further Reading (and Viewing)}
+Warning: This handout is NOT a rigorous treatment of Barycentric Coordinates. In fact, it is very unrigorous. It is only meant to serve as a launch pad for future explorations of Barycentric Coordinates.
+\vspace{.2in}
+
+
+https://www.youtube.com/watch?v=KQim7-wrwL0.
+
+https://web.evanchen.cc/handouts/bary/bary-full.pdf
+
+https://web.evanchen.cc/geombook.html
+
+https://artofproblemsolving.com/store/item/precalculus
+
+\section{Thanks for Reading This Handout!}Please share this if you like it. If you find any mistakes, have any suggestions for improvements, have some editing/formatting tips, know of some nice Overleaf packages, or find some nice problems can be Barybashed with these basic tools, please let me know! 
+\end{document}
